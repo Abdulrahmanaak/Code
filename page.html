@@ -1,0 +1,10 @@
+<script>
+    fetch('/your-endpoint')
+      .then(response => response.json())
+      .then(data => {
+        console.log('Response from server:', data);
+        // Process the data as needed
+      })
+      .catch(error => console.error('Error:', error));
+  </script>
+  
