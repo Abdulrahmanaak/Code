@@ -247,6 +247,32 @@ CREATE TABLE IF NOT EXISTS users (
 
 INSERT INTO users (username, password)
 VALUES
+
   ('john', 'password123'),
   ('jane', 'password456'),
   ('admin', 'adminpass');
+
+
+
+  CREATE TABLE card_details (
+  card_id INT NOT NULL AUTO_INCREMENT,
+  card_type VARCHAR(10) NOT NULL,
+  player_id INT NOT NULL,
+  PRIMARY KEY (card_id),
+  FOREIGN KEY (player_id) REFERENCES player (player_id)
+
+);
+-- Inserting a red card for player with ID 1001
+INSERT INTO card_details (card_type, player_id) VALUES ('Red', 1001);
+
+-- Inserting a yellow card for player with ID 1016
+INSERT INTO card_details (card_type, player_id) VALUES ('Yellow', 1016);
+
+-- Inserting a red card for player with ID 1003
+INSERT INTO card_details (card_type, player_id) VALUES ('Red', 1003);
+
+-- Inserting a yellow card for player with ID 1010
+INSERT INTO card_details (card_type, player_id) VALUES ('Yellow', 1010);
+
+-- Inserting a red card for player with ID 1023
+INSERT INTO card_details (card_type, player_id) VALUES ('Red', 1023);
