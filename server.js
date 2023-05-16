@@ -5,7 +5,7 @@ const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'R@hman2051423',
-  database: 'kfupm'
+  database: 'kfupm0'
 });
 
 // Read user input
@@ -576,117 +576,169 @@ function browseHighestGoalScorer() {
   function browseRedCardsByTeam() {
     console.log('Browse the players who received red cards in each team');
   
-    // Fetch all match details
-    const matchDetails = getMatchDetails();
-  
-    // Fetch all players
-    const players = getPlayers();
-  
     // Fetch all teams
-    const teams = getTeams();
+    const teamsSql = `
+      SELECT team_id
+      FROM team
+    `;
   
-    // Filter players who received red cards in each team
-    teams.forEach((team) => {
-      const redCardPlayers = matchDetails
-        .filter((match) => match.team_id === team.team_id && match.red_cards > 0)
-        .map((match) => players.find((player) => player.player_id === match.player_gk));
-  
-      console.log(`Team: ${team.team_id}`);
-      console.log('Players Who Received Red Cards:');
-      console.log(redCardPlayers);
-      console.log('-----------------------------');
-    });
-  
-    displayGuestMenu();
-    handleGuestChoice();
-  }
-  
-  
-  function getMatchDetails() {
-    // Simulated data retrieval
-    return [
-      { match_no: 1, team_id: 1214, red_cards: 0, player_gk: 1001 },
-      { match_no: 2, team_id: 1215, red_cards: 2, player_gk: 1003 },
-      { match_no: 3, team_id: 1216, red_cards: 1, player_gk: 1023 },
-      { match_no: 4, team_id: 1217, red_cards: 0, player_gk: 1009 },
-    ];
-  }
-  
-  function getPlayers() {
-    // Simulated data retrieval
-    return [
-      { player_id: 1001, player_name: 'Ahmed' },
-      { player_id: 1003, player_name: 'Nasr' },
-      { player_id: 1023, player_name: 'Yasir' },
-      { player_id: 1009, player_name: 'Abdullah' },
-    ];
-  }
-  
-  function getTeams() {
-    // Simulated data retrieval
-    return [
-      { team_id: 1214 },
-      { team_id: 1215 },
-      { team_id: 1216 },
-      { team_id: 1217 },
-    ];
-  }
-  
-    
-  function browseTeamMembers() {
-    rl.question('Enter the team ID: ', (teamId) => {
-      const sqlQuery = `
-        SELECT t.team_id, t.tr_id, p.player_id, p.jersey_no, p.player_name, p.position_to_play
-        FROM team AS t
-        LEFT JOIN player AS p ON p.team_id = t.team_id
-        LEFT JOIN match_captain AS mc ON mc.team_id = t.team_id
-        WHERE t.team_id = ${teamId}`;
-  
-      db.query(sqlQuery, (error, results) => {
-        if (error) {
-          console.log(`Error fetching team members: ${error}`);
-        } else {
-          if (results.length === 0) {
-            console.log('No team members found for the provided team ID.');
-          } else {
-            console.log('Team Members:');
-            console.log('-------------');
-            console.log(`Team ID: ${results[0].team_id}`);
-            console.log(`Tournament ID: ${results[0].tr_id}`);
-            
-            // Retrieve manager, coach, and captain information from the results
-            const manager = results.find((row) => row.position_to_play === 'Manager');
-            const coach = results.find((row) => row.position_to_play === 'Coach');
-            const captain = results.find((row) => row.player_id === row.player_captain);
-  
-            if (manager) {
-                console.log(`Manager: ${manager.playerName}`);
-            }
-            
-            if (coach) {
-              console.log(`Coach: ${coach.player_name}`);
-            }
-            
-            if (captain) {
-              console.log(`Captain: ${captain.player_name}`);
-            }
-  
-            console.log('Players:');
-            results.forEach((row) => {
-              console.log(`- Jersey No: ${row.jersey_no}, Name: ${row.player_name}, Position: ${row.position_to_play}`);
-            });
-          }
-        }
-  
+    db.query(teamsSql, (err, teamResults) => {
+      if (err) {
+        console.error('Error executing query:', err);
         displayGuestMenu();
         handleGuestChoice();
+        return;
+      }
+  
+      // Track the number of teams processed
+      let teamsProcessed = 0;
+  
+      // Iterate over each team and fetch players who received red cards
+      teamResults.forEach((team) => {
+        const teamId = team.team_id;
+        const redCardsSql = `
+          SELECT p.player_id, p.player_name
+          FROM player p
+          WHERE p.team_id = ${teamId} AND p.red_card > 0
+        `;
+  
+        db.query(redCardsSql, (err, redCardsResults) => {
+          if (err) {
+            console.error(`Error fetching red cards for team ${teamId}:`, err);
+            return;
+          }
+  
+          // Display the team and players who received red cards
+          console.log(`Team: ${teamId}`);
+          console.log('Players Who Received Red Cards:');
+          redCardsResults.forEach((player) => {
+            console.log(`- Player ID: ${player.player_id}, Name: ${player.player_name}`);
+          });
+          console.log('-----------------------------');
+  
+          // Check if all teams have been processed
+          teamsProcessed++;
+          if (teamsProcessed === teamResults.length) {
+            // Display the menu and handle guest choice
+            displayGuestMenu();
+            handleGuestChoice();
+          }
+        });
       });
     });
   }
   
+  // function getMatchDetails() {
+  //   // Simulated data retrieval
+  //   return [
+  //     { match_no: 1, team_id: 1214, red_cards: 0, player_gk: 1001 },
+  //     { match_no: 2, team_id: 1215, red_cards: 2, player_gk: 1003 },
+  //     { match_no: 3, team_id: 1216, red_cards: 1, player_gk: 1023 },
+  //     { match_no: 4, team_id: 1217, red_cards: 0, player_gk: 1009 },
+  //   ];
+  // }
   
+  // function getPlayers() {
+  //   // Simulated data retrieval
+  //   return [
+  //     { player_id: 1001, player_name: 'Ahmed' },
+  //     { player_id: 1003, player_name: 'Nasr' },
+  //     { player_id: 1023, player_name: 'Yasir' },
+  //     { player_id: 1009, player_name: 'Abdullah' },
+  //   ];
+  // }
   
+  // function getTeams() {
+  //   // Simulated data retrieval
+  //   return [
+  //     { team_id: 1214 },
+  //     { team_id: 1215 },
+  //     { team_id: 1216 },
+  //     { team_id: 1217 },
+  //   ];
+  // }
+      
+function browseTeamMembers() {
+  console.log('Browse all members of a selected team (including manager, coach, captain, and players)');
 
+  rl.question('Enter the team ID: ', (teamId) => {
+    const query = `
+      SELECT t.team_id, t.team_group,
+             tm.manager_id, tm.manager_name,
+             c.coach_id, c.coach_name,
+             mc.player_captain,
+             p.player_id, p.jersey_no, p.player_name, p.position_to_play, DATE_FORMAT(p.dt_of_bir, '%Y-%m-%d') AS dt_of_bir
+      FROM team AS t
+      LEFT JOIN team_manager AS tm ON t.team_id = tm.team_id
+      LEFT JOIN team_coaches AS tc ON t.team_id = tc.team_id
+      LEFT JOIN coach AS c ON tc.coach_id = c.coach_id
+      LEFT JOIN match_captain AS mc ON t.team_id = mc.team_id
+      LEFT JOIN player AS p ON mc.player_captain = p.player_id OR t.team_id = p.team_id
+      WHERE t.team_id = ${teamId}`;
+
+    db.query(query, (error, results) => {
+      if (error) {
+        console.error('Error executing query:', error);
+        displayGuestMenu();
+        return;
+      }
+
+      console.log('Team Information:');
+      console.log('------------------');
+      if (results.length === 0) {
+        console.log('No team found with the specified team ID.');
+      } else {
+        const teamInfo = results[0];
+        console.log('Team ID:', teamInfo.team_id);
+        console.log('Team Group:', teamInfo.team_group);
+
+        console.log('\nManager Information:');
+        console.log('---------------------');
+        console.log('Manager ID:', teamInfo.manager_id);
+        console.log('Manager Name:', teamInfo.manager_name);
+
+        console.log('\nCoach Information:');
+        console.log('-------------------');
+        console.log('Coach ID:', teamInfo.coach_id);
+        console.log('Coach Name:', teamInfo.coach_name);
+
+        console.log('\nCaptain Information:');
+        console.log('---------------------');
+        if (teamInfo.player_captain) {
+          console.log('Captain ID:', teamInfo.player_captain);
+          console.log('Captain Details:');
+          const captain = results.find((result) => result.player_id === teamInfo.player_captain);
+          console.log('  Jersey Number:', captain.jersey_no);
+          console.log('  Player Name:', captain.player_name);
+          console.log('  Position to Play:', captain.position_to_play);
+          console.log('  Date of Birth:', captain.dt_of_bir);
+        } else {
+          console.log('No captain assigned for the team.');
+        }
+
+        console.log('\nPlayers Information:');
+        console.log('--------------------');
+        const players = results.filter((result) => result.player_id !== teamInfo.player_captain);
+        if (players.length > 0) {
+          players.forEach((player) => {
+            console.log('Player ID:', player.player_id);
+            console.log('Jersey Number:', player.jersey_no);
+            console.log('Player Name:', player.player_name);
+            console.log('Position to Play:', player.position_to_play);
+            console.log('Date of Birth:', player.dt_of_bir);
+            console.log('----------------------');
+          });
+        } else {
+          console.log('No players found for the team.');
+        }
+      }
+
+      console.log('\n');
+      displayGuestMenu();
+    });
+  });
+}
+  
 // Start the program
 displayMenu();
 handleChoice();

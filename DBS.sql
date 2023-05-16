@@ -252,3 +252,16 @@ VALUES
   ('john', 'password123'),
   ('jane', 'password456'),
   ('admin', 'adminpass');
+
+  CREATE TABLE team_manager (
+  manager_id numeric NOT NULL,
+  manager_name character varying(40) NOT NULL,
+  team_id numeric NOT NULL,
+  tr_id numeric NOT NULL,
+  PRIMARY KEY (manager_id),
+  FOREIGN KEY (team_id, tr_id) REFERENCES team (team_id, tr_id)
+);
+
+INSERT INTO team_manager (manager_id, manager_name, team_id, tr_id) VALUES (1, 'John Doe', 1214, 1);
+INSERT INTO team_manager (manager_id, manager_name, team_id, tr_id) VALUES (2, 'Jane Smith', 1215, 1);
+INSERT INTO team_manager (manager_id, manager_name, team_id, tr_id) VALUES (3, 'Michael Johnson', 1216, 2);
