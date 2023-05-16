@@ -601,8 +601,6 @@ function browseHighestGoalScorer() {
     handleGuestChoice();
   }
   
-  // Sample implementation of getMatchDetails, getPlayers, and getTeams functions
-  // Replace these with your actual data retrieval functions
   
   function getMatchDetails() {
     // Simulated data retrieval

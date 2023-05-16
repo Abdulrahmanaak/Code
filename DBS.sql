@@ -56,25 +56,26 @@ CREATE TABLE player (
  player_name character varying(40) NOT NULL,
  position_to_play character(2) NOT NULL,
  dt_of_bir date,
-
+ red_card numeric DEFAULT 0,
+ yellow_card numeric DEFAULT 0,
 PRIMARY KEY (player_id, team_id),
 FOREIGN KEY (team_id) REFERENCES team (team_id));
-INSERT INTO player VALUES (1001,1214,1, 'Ahmed', 'GK', '1999-03-10');
-INSERT INTO player VALUES (1008,1214,2, 'Khalid', 'DF', '1977-02-12');
-INSERT INTO player VALUES (1016,1214,3, 'Saeed', 'MF', '1999-08-05');
-INSERT INTO player VALUES (1007,1215,1, 'Majid', 'DF', '1998-02-20');
-INSERT INTO player VALUES (1013,1215,5, 'Fahd', 'MF', '1997-07-27');
-INSERT INTO player VALUES (1010,1215,6, 'Mohammed', 'DF', '1992-11-20');
-INSERT INTO player VALUES (1004,1215,7, 'Ali', 'DF', '1995-10-11');
-INSERT INTO player VALUES (1012,1215,8, 'Raed', 'MF', '1997-01-05');
-INSERT INTO player VALUES (1017,1215,9, 'Mousa', 'MF', '1996-12-17');
-INSERT INTO player VALUES (1023,1216,1, 'Naeem', 'GK', '1991-05-27');
-INSERT INTO player VALUES (1022,1216,4, 'Yasir', 'FD', '1998-07-15');
-INSERT INTO player VALUES (1003,1217,2, 'Nasr', 'GK', '1997-09-25');
-INSERT INTO player VALUES (1015,1217,13, 'Ashraf', 'MF', '1994-01-16');
-INSERT INTO player VALUES (1019,1217,14, 'Hassan', 'MF', '1991-03-28');
-INSERT INTO player VALUES (1009,1217,15, 'Abdullah', 'DF', '1996-06-09');
-INSERT INTO player VALUES (1021,1217,16, 'Bassam', 'FD', '1999-07-27');
+INSERT INTO player VALUES (1001,1214,1, 'Ahmed', 'GK', '1999-03-10', 1, 0);
+INSERT INTO player VALUES (1008,1214,2, 'Khalid', 'DF', '1977-02-12', 2, 3);
+INSERT INTO player VALUES (1016,1214,3, 'Saeed', 'MF', '1999-08-05', 0, 1);
+INSERT INTO player VALUES (1007,1215,1, 'Majid', 'DF', '1998-02-20', 0, 0);
+INSERT INTO player VALUES (1013,1215,5, 'Fahd', 'MF', '1997-07-27', 0, 0);
+INSERT INTO player VALUES (1010,1215,6, 'Mohammed', 'DF', '1992-11-20', 0, 0);
+INSERT INTO player VALUES (1004,1215,7, 'Ali', 'DF', '1995-10-11', 0, 0);
+INSERT INTO player VALUES (1012,1215,8, 'Raed', 'MF', '1997-01-05', 0, 0);
+INSERT INTO player VALUES (1017,1215,9, 'Mousa', 'MF', '1996-12-17', 0, 0);
+INSERT INTO player VALUES (1023,1216,1, 'Naeem', 'GK', '1991-05-27', 0, 0);
+INSERT INTO player VALUES (1022,1216,4, 'Yasir', 'FD', '1998-07-15', 0, 0);
+INSERT INTO player VALUES (1003,1217,2, 'Nasr', 'GK', '1997-09-25', 0, 0);
+INSERT INTO player VALUES (1015,1217,13, 'Ashraf', 'MF', '1994-01-16', 0, 0);
+INSERT INTO player VALUES (1019,1217,14, 'Hassan', 'MF', '1991-03-28', 0, 0);
+INSERT INTO player VALUES (1009,1217,15, 'Abdullah', 'DF', '1996-06-09', 0, 0);
+INSERT INTO player VALUES (1021,1217,16, 'Bassam', 'FD', '1999-07-27', 0, 0);
 CREATE TABLE referee (
  referee_id numeric NOT NULL,
  referee_name character varying(40) NOT NULL,
@@ -251,28 +252,3 @@ VALUES
   ('john', 'password123'),
   ('jane', 'password456'),
   ('admin', 'adminpass');
-
-
-
-  CREATE TABLE card_details (
-  card_id INT NOT NULL AUTO_INCREMENT,
-  card_type VARCHAR(10) NOT NULL,
-  player_id INT NOT NULL,
-  PRIMARY KEY (card_id),
-  FOREIGN KEY (player_id) REFERENCES player (player_id)
-
-);
--- Inserting a red card for player with ID 1001
-INSERT INTO card_details (card_type, player_id) VALUES ('Red', 1001);
-
--- Inserting a yellow card for player with ID 1016
-INSERT INTO card_details (card_type, player_id) VALUES ('Yellow', 1016);
-
--- Inserting a red card for player with ID 1003
-INSERT INTO card_details (card_type, player_id) VALUES ('Red', 1003);
-
--- Inserting a yellow card for player with ID 1010
-INSERT INTO card_details (card_type, player_id) VALUES ('Yellow', 1010);
-
--- Inserting a red card for player with ID 1023
-INSERT INTO card_details (card_type, player_id) VALUES ('Red', 1023);
