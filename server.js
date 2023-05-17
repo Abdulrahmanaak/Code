@@ -627,36 +627,6 @@ function browseHighestGoalScorer() {
       });
     });
   }
-  
-  // function getMatchDetails() {
-  //   // Simulated data retrieval
-  //   return [
-  //     { match_no: 1, team_id: 1214, red_cards: 0, player_gk: 1001 },
-  //     { match_no: 2, team_id: 1215, red_cards: 2, player_gk: 1003 },
-  //     { match_no: 3, team_id: 1216, red_cards: 1, player_gk: 1023 },
-  //     { match_no: 4, team_id: 1217, red_cards: 0, player_gk: 1009 },
-  //   ];
-  // }
-  
-  // function getPlayers() {
-  //   // Simulated data retrieval
-  //   return [
-  //     { player_id: 1001, player_name: 'Ahmed' },
-  //     { player_id: 1003, player_name: 'Nasr' },
-  //     { player_id: 1023, player_name: 'Yasir' },
-  //     { player_id: 1009, player_name: 'Abdullah' },
-  //   ];
-  // }
-  
-  // function getTeams() {
-  //   // Simulated data retrieval
-  //   return [
-  //     { team_id: 1214 },
-  //     { team_id: 1215 },
-  //     { team_id: 1216 },
-  //     { team_id: 1217 },
-  //   ];
-  // }
       
 function browseTeamMembers() {
   console.log('Browse all members of a selected team (including manager, coach, captain, and players)');
