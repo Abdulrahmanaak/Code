@@ -516,62 +516,43 @@ function addNewTournament() {
     });
   }
    
-function browseHighestGoalScorer() {
+  function browseHighestGoalScorer() {
     console.log('Browse the player with the highest goals scored in all tournaments');
   
-    // Fetch the player details with the highest goals scored
-    const playerSql = `
-      SELECT p.player_id, p.player_name, t.tr_id, MAX(m.goal_score) AS highest_goals
-      FROM player p
-      INNER JOIN match_played m ON p.player_id = m.player_of_match
-      INNER JOIN team t ON p.team_id = t.team_id
-      GROUP BY p.player_id, p.player_name, t.tr_id
-      ORDER BY highest_goals DESC
-      LIMIT 1
+    const sqlQuery = `
+    SELECT p.player_name, COUNT(gd.goal_id) AS total_goals
+    FROM player AS p
+    JOIN goal_details AS gd ON p.player_id = gd.player_id
+    GROUP BY p.player_id, p.player_name
+    HAVING COUNT(gd.goal_id) = (
+        SELECT COUNT(goal_id) AS total_goals
+        FROM goal_details
+        GROUP BY player_id
+        ORDER BY total_goals DESC
+        LIMIT 1
+    );
     `;
   
-    db.query(playerSql, (err, playerResults) => {
-      if (err) {
-        console.error('Error executing query: ', err);
-        return;
-      }
-  
-      if (playerResults.length === 0) {
-        console.log('No player found with the highest goals scored in any tournament.');
-        return;
-      }
-  
-      const player = playerResults[0];
-      const trId = player.tr_id;
-  
-      // Fetch the tournament name based on the tr_id
-      const tournamentSql = `
-        SELECT tr_name
-        FROM tournament
-        WHERE tr_id = ?
-      `;
-  
-      db.query(tournamentSql, [trId], (err, tournamentResult) => {
-        if (err) {
-          console.error('Error executing query: ', err);
-          return;
-        }
-  
-        const tournamentName = tournamentResult[0].tr_name;
-  
-        // Display the player details with the highest goals scored in all tournaments
-        console.log(`Player with the highest goals scored in all tournaments:`);
-        console.log(`Player ID: ${player.player_id}`);
-        console.log(`Player Name: ${player.player_name}`);
-        console.log(`Tournament Name: ${tournamentName}`);
-        console.log(`Goals Scored: ${player.highest_goals}`);
-        console.log('-------------------');
-
+    db.query(sqlQuery, (error, results) => {
+      if (error) {
+        console.error('Error fetching highest goal scorer:', error);
         displayGuestMenu();
         handleGuestChoice();
-      });
+        return;
+      }
+  
+      if (results.length === 0) {
+        console.log('No goal scorer found.');
+      } else {
+        const highestScorer = results[0];
+        console.log(`Highest goal scorer: ${highestScorer.player_name}`);
+        console.log(`Total goals: ${highestScorer.total_goals}`);
+      }
+  
+      displayGuestMenu();
+      handleGuestChoice();
     });
-  }
+  }  
       
   function browseRedCardsByTeam() {
     console.log('Browse the players who received red cards in each team');
